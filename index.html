@@ -48,6 +48,10 @@
     .inventory-item:hover .remove-button {
       opacity: 1;
     }
+
+    .item-details {
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -55,6 +59,10 @@
 
   <h2>Add Item</h2>
   <input type="text" id="new-item-input" placeholder="Enter item name">
+  <label for="item-weight">Weight:</label>
+  <input type="text" id="item-weight" placeholder="Enter item weight">
+  <label for="item-cost">Cost:</label>
+  <input type="text" id="item-cost" placeholder="Enter item cost">
   <button onclick="addItem()">Add Item</button>
   <label for="item-type">Item Type:</label>
   <select id="item-type">
@@ -89,10 +97,10 @@
 
     // Sample inventory data
     let inventoryItems = [
-      { name: 'Sword', equipped: false, type: 'item' },
-      { name: 'Shield', equipped: true, type: 'item' },
-      { name: 'Cloak', equipped: false, type: 'clothing' },
-      { name: 'Hat', equipped: false, type: 'clothing' }
+      { name: 'Sword', equipped: false, type: 'item', weight: '5 lbs', cost: '$10' },
+      { name: 'Shield', equipped: true, type: 'item', weight: '8 lbs', cost: '$15' },
+      { name: 'Cloak', equipped: false, type: 'clothing', weight: '2 lbs', cost: '$5' },
+      { name: 'Hat', equipped: false, type: 'clothing', weight: '1 lb', cost: '$3' }
     ];
 
     // Function to render inventory items
@@ -129,7 +137,15 @@
           renderClothingItems();
         });
 
+        const itemDetails = document.createElement('div');
+        itemDetails.className = 'item-details';
+        itemDetails.innerHTML = `
+          <div><strong>Weight:</strong> ${item.weight}</div>
+          <div><strong>Cost:</strong> ${item.cost}</div>
+        `;
+
         itemDiv.appendChild(removeButton);
+        itemDiv.appendChild(itemDetails);
         inventoryContainer.appendChild(itemDiv);
       });
     }
@@ -153,6 +169,14 @@
           renderClothingItems();
         });
 
+        const itemDetails = document.createElement('div');
+        itemDetails.className = 'item-details';
+        itemDetails.innerHTML = `
+          <div><strong>Weight:</strong> ${item.weight}</div>
+          <div><strong>Cost:</strong> ${item.cost}</div>
+        `;
+
+        itemDiv.appendChild(itemDetails);
         equippedContainer.appendChild(itemDiv);
       });
     }
@@ -176,6 +200,14 @@
           renderClothingItems();
         });
 
+        const itemDetails = document.createElement('div');
+        itemDetails.className = 'item-details';
+        itemDetails.innerHTML = `
+          <div><strong>Weight:</strong> ${item.weight}</div>
+          <div><strong>Cost:</strong> ${item.cost}</div>
+        `;
+
+        itemDiv.appendChild(itemDetails);
         clothingContainer.appendChild(itemDiv);
       });
     }
@@ -189,15 +221,19 @@
     function addItem() {
       const newItemInput = document.getElementById('new-item-input');
       const itemName = newItemInput.value.trim();
+      const itemWeight = document.getElementById('item-weight').value.trim();
+      const itemCost = document.getElementById('item-cost').value.trim();
       const itemType = document.getElementById('item-type').value;
 
       if (itemName !== '') {
-        const newItem = { name: itemName, equipped: false, type: itemType };
+        const newItem = { name: itemName, equipped: false, type: itemType, weight: itemWeight, cost: itemCost };
         inventoryItems.push(newItem);
         renderInventory();
         renderEquippedItems();
         renderClothingItems();
         newItemInput.value = '';
+        document.getElementById('item-weight').value = '';
+        document.getElementById('item-cost').value = '';
       }
     }
 
