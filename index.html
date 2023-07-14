@@ -52,17 +52,41 @@
     .item-details {
       margin-top: 5px;
     }
+
+    .item-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .item-properties {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .item-property {
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>Character Inventory</h1>
 
   <h2>Add Item</h2>
-  <input type="text" id="new-item-input" placeholder="Enter item name">
-  <label for="item-weight">Weight:</label>
-  <input type="text" id="item-weight" placeholder="Enter item weight">
-  <label for="item-cost">Cost:</label>
-  <input type="text" id="item-cost" placeholder="Enter item cost">
+  <div>
+    <label for="item-name">Name:</label>
+    <input type="text" id="item-name" placeholder="Enter item name">
+  </div>
+  <div class="item-properties">
+    <div class="item-property">
+      <label for="item-weight">Weight:</label>
+      <input type="text" id="item-weight" placeholder="Enter item weight">
+    </div>
+    <div class="item-property">
+      <label for="item-cost">Cost:</label>
+      <input type="text" id="item-cost" placeholder="Enter item cost">
+    </div>
+  </div>
   <button onclick="addItem()">Add Item</button>
   <label for="item-type">Item Type:</label>
   <select id="item-type">
@@ -111,7 +135,26 @@
       inventoryItems.forEach((item, index) => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'inventory-item';
-        itemDiv.textContent = item.name;
+
+        const itemNameDiv = document.createElement('div');
+        itemNameDiv.className = 'item-name';
+        itemNameDiv.textContent = item.name;
+        itemDiv.appendChild(itemNameDiv);
+
+        const itemPropertiesDiv = document.createElement('div');
+        itemPropertiesDiv.className = 'item-properties';
+
+        const weightDiv = document.createElement('div');
+        weightDiv.className = 'item-property';
+        weightDiv.innerHTML = `<strong>Weight:</strong> ${item.weight}`;
+        itemPropertiesDiv.appendChild(weightDiv);
+
+        const costDiv = document.createElement('div');
+        costDiv.className = 'item-property';
+        costDiv.innerHTML = `<strong>Cost:</strong> ${item.cost}`;
+        itemPropertiesDiv.appendChild(costDiv);
+
+        itemDiv.appendChild(itemPropertiesDiv);
 
         if (item.equipped) {
           itemDiv.classList.add('equipped-item');
@@ -137,15 +180,7 @@
           renderClothingItems();
         });
 
-        const itemDetails = document.createElement('div');
-        itemDetails.className = 'item-details';
-        itemDetails.innerHTML = `
-          <div><strong>Weight:</strong> ${item.weight}</div>
-          <div><strong>Cost:</strong> ${item.cost}</div>
-        `;
-
         itemDiv.appendChild(removeButton);
-        itemDiv.appendChild(itemDetails);
         inventoryContainer.appendChild(itemDiv);
       });
     }
@@ -159,8 +194,34 @@
 
       equippedItems.forEach(item => {
         const itemDiv = document.createElement('div');
-        itemDiv.className = 'inventory-item equipped-item';
-        itemDiv.textContent = item.name;
+        itemDiv.className = 'inventory-item';
+
+        const itemNameDiv = document.createElement('div');
+        itemNameDiv.className = 'item-name';
+        itemNameDiv.textContent = item.name;
+        itemDiv.appendChild(itemNameDiv);
+
+        const itemPropertiesDiv = document.createElement('div');
+        itemPropertiesDiv.className = 'item-properties';
+
+        const weightDiv = document.createElement('div');
+        weightDiv.className = 'item-property';
+        weightDiv.innerHTML = `<strong>Weight:</strong> ${item.weight}`;
+        itemPropertiesDiv.appendChild(weightDiv);
+
+        const costDiv = document.createElement('div');
+        costDiv.className = 'item-property';
+        costDiv.innerHTML = `<strong>Cost:</strong> ${item.cost}`;
+        itemPropertiesDiv.appendChild(costDiv);
+
+        itemDiv.appendChild(itemPropertiesDiv);
+
+        if (item.equipped) {
+          itemDiv.classList.add('equipped-item');
+          if (item.type === 'clothing') {
+            itemDiv.classList.add('clothing-item');
+          }
+        }
 
         itemDiv.addEventListener('click', () => {
           toggleEquipped(item);
@@ -169,14 +230,17 @@
           renderClothingItems();
         });
 
-        const itemDetails = document.createElement('div');
-        itemDetails.className = 'item-details';
-        itemDetails.innerHTML = `
-          <div><strong>Weight:</strong> ${item.weight}</div>
-          <div><strong>Cost:</strong> ${item.cost}</div>
-        `;
+        const removeButton = document.createElement('div');
+        removeButton.className = 'remove-button';
+        removeButton.addEventListener('click', (event) => {
+          event.stopPropagation();
+          removeItem(index);
+          renderInventory();
+          renderEquippedItems();
+          renderClothingItems();
+        });
 
-        itemDiv.appendChild(itemDetails);
+        itemDiv.appendChild(removeButton);
         equippedContainer.appendChild(itemDiv);
       });
     }
@@ -190,8 +254,34 @@
 
       clothingItems.forEach(item => {
         const itemDiv = document.createElement('div');
-        itemDiv.className = 'inventory-item equipped-item clothing-item';
-        itemDiv.textContent = item.name;
+        itemDiv.className = 'inventory-item';
+
+        const itemNameDiv = document.createElement('div');
+        itemNameDiv.className = 'item-name';
+        itemNameDiv.textContent = item.name;
+        itemDiv.appendChild(itemNameDiv);
+
+        const itemPropertiesDiv = document.createElement('div');
+        itemPropertiesDiv.className = 'item-properties';
+
+        const weightDiv = document.createElement('div');
+        weightDiv.className = 'item-property';
+        weightDiv.innerHTML = `<strong>Weight:</strong> ${item.weight}`;
+        itemPropertiesDiv.appendChild(weightDiv);
+
+        const costDiv = document.createElement('div');
+        costDiv.className = 'item-property';
+        costDiv.innerHTML = `<strong>Cost:</strong> ${item.cost}`;
+        itemPropertiesDiv.appendChild(costDiv);
+
+        itemDiv.appendChild(itemPropertiesDiv);
+
+        if (item.equipped) {
+          itemDiv.classList.add('equipped-item');
+          if (item.type === 'clothing') {
+            itemDiv.classList.add('clothing-item');
+          }
+        }
 
         itemDiv.addEventListener('click', () => {
           toggleEquipped(item);
@@ -200,14 +290,17 @@
           renderClothingItems();
         });
 
-        const itemDetails = document.createElement('div');
-        itemDetails.className = 'item-details';
-        itemDetails.innerHTML = `
-          <div><strong>Weight:</strong> ${item.weight}</div>
-          <div><strong>Cost:</strong> ${item.cost}</div>
-        `;
+        const removeButton = document.createElement('div');
+        removeButton.className = 'remove-button';
+        removeButton.addEventListener('click', (event) => {
+          event.stopPropagation();
+          removeItem(index);
+          renderInventory();
+          renderEquippedItems();
+          renderClothingItems();
+        });
 
-        itemDiv.appendChild(itemDetails);
+        itemDiv.appendChild(removeButton);
         clothingContainer.appendChild(itemDiv);
       });
     }
@@ -219,8 +312,7 @@
 
     // Function to add a new item to the inventory
     function addItem() {
-      const newItemInput = document.getElementById('new-item-input');
-      const itemName = newItemInput.value.trim();
+      const itemName = document.getElementById('item-name').value.trim();
       const itemWeight = document.getElementById('item-weight').value.trim();
       const itemCost = document.getElementById('item-cost').value.trim();
       const itemType = document.getElementById('item-type').value;
@@ -231,7 +323,7 @@
         renderInventory();
         renderEquippedItems();
         renderClothingItems();
-        newItemInput.value = '';
+        document.getElementById('item-name').value = '';
         document.getElementById('item-weight').value = '';
         document.getElementById('item-cost').value = '';
       }
