@@ -3,48 +3,1089 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>GWiz2077</title>
+  <title>Element Card</title>
   <style>
-    body{font-family:system-ui,Arial,sans-serif;max-width:900px;margin:40px auto;padding:0 16px;line-height:1.4}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
-    a.card{display:block;padding:16px;border:1px solid #ddd;border-radius:14px;text-decoration:none;color:inherit}
-    a.card:hover{border-color:#999}
-    .tag{font-size:12px;opacity:.75}
+    :root{
+      --bg:#0b0f14;
+      --panel:rgba(15,22,32,.78);
+      --panel2:rgba(12,18,26,.58);
+      --text:#e7eef7;
+      --muted:#9fb0c3;
+      --border:rgba(255,255,255,.08);
+      --shadow:0 18px 60px rgba(0,0,0,.45);
+      --radius:18px;
+
+      --accent:#7aa2ff;
+      --good:#a3ff6f;
+      --warn:#ffcc66;
+      --bad:#ff5c7a;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(122,162,255,.18), transparent 60%),
+        radial-gradient(900px 550px at 90% 10%, rgba(76,201,240,.15), transparent 55%),
+        radial-gradient(900px 600px at 50% 110%, rgba(163,255,111,.12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding:22px;
+    }
+
+    .app{ width:min(1040px, 100%); display:flex; flex-direction:column; gap:14px; }
+
+    header{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      padding:14px 16px;
+      background:rgba(15,22,32,.75);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand{ display:flex; flex-direction:column; gap:2px; }
+    .brand h1{
+      font-size:14px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin:0;
+      color:rgba(231,238,247,.92);
+    }
+    .brand .sub{ font-size:12px; color:var(--muted); margin:0; }
+
+    .rightHeader{ display:flex; gap:10px; align-items:center; }
+    .pill{
+      display:flex; gap:8px; align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(12,18,26,.45);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .dot{ width:10px; height:10px; border-radius:999px; background:var(--accent); box-shadow:0 0 18px rgba(122,162,255,.35); }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      padding:6px;
+      border:1px solid var(--border);
+      background:rgba(12,18,26,.45);
+      border-radius:999px;
+    }
+    .tab{
+      border:1px solid transparent;
+      background:transparent;
+      color:rgba(159,176,195,.95);
+      padding:8px 12px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:950;
+      letter-spacing:.02em;
+    }
+    .tab.active{
+      color:var(--text);
+      border-color: rgba(122,162,255,.35);
+      background: rgba(122,162,255,.18);
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius: 16px;
+      background:var(--panel);
+      padding:14px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .searchRow{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .search{
+      flex:1;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(11,15,20,.70);
+    }
+    .search input{
+      width:100%;
+      border:0; outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:16px;
+      font-weight:950;
+      letter-spacing:.02em;
+    }
+    .search input::placeholder{ color:rgba(159,176,195,.65); font-weight:850; }
+
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(17,27,39,.65);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:950;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:active{ transform: translateY(1px) }
+    .btn.primary{ background:rgba(122,162,255,.22); border-color: rgba(122,162,255,.35); }
+    .btn.ghost{ background:rgba(12,18,26,.25); }
+    .btn.bad{ background:rgba(255,92,122,.14); border-color: rgba(255,92,122,.28); }
+
+    .hint{ margin:10px 0 0 0; color:rgba(159,176,195,.88); font-size:12px; line-height:1.35; }
+    code{ background:rgba(0,0,0,.22); padding:2px 6px; border-radius:8px; border:1px solid var(--border); }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap:12px;
+      margin-top:12px;
+      align-items:start;
+    }
+    @media(max-width: 960px){
+      .layout{ grid-template-columns: 1fr; }
+    }
+
+    .panel2{
+      border:1px solid var(--border);
+      border-radius: 18px;
+      background:var(--panel2);
+      padding:14px;
+    }
+
+    .badges{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(11,15,20,.55);
+      color:var(--muted);
+      font-size:12px;
+      font-weight:950;
+    }
+
+    .hero{ display:flex; gap:14px; align-items:flex-start; }
+    .symbolBox{
+      width:118px; height:118px;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:rgba(11,15,20,.55);
+      display:grid; place-items:center;
+      position:relative; overflow:hidden;
+    }
+    .symbolBox::after{
+      content:"";
+      position:absolute; inset:-55%;
+      background: radial-gradient(circle at 30% 30%, rgba(122,162,255,.22), transparent 55%);
+      transform: rotate(12deg);
+    }
+    .symbol{ position:relative; z-index:1; font-size:50px; font-weight:1000; letter-spacing:.02em; }
+
+    .meta{ flex:1; display:flex; flex-direction:column; gap:6px; padding-top:6px; }
+    .name{ font-size:26px; font-weight:1000; margin:0; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media(max-width: 560px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+    .kv{
+      padding:10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(11,15,20,.48);
+      font-size:13px;
+      min-height: 62px;
+    }
+    .k{ color:rgba(159,176,195,.85); font-weight:900; letter-spacing:.02em; font-size:12px; text-transform:uppercase; }
+    .v{ color:rgba(231,238,247,.96); font-weight:950; font-size:16px; margin-top:4px; }
+    .v.small{ font-size:13px; font-weight:900; color:rgba(231,238,247,.92); line-height:1.35; }
+
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+
+    details{
+      margin-top:12px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:rgba(11,15,20,.26);
+      overflow:hidden;
+    }
+    summary{
+      cursor:pointer; user-select:none;
+      padding:12px 12px;
+      font-weight:1000;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:12px;
+      color:rgba(231,238,247,.92);
+      outline:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    summary .sub{
+      font-weight:900;
+      letter-spacing:0;
+      text-transform:none;
+      color:rgba(159,176,195,.9);
+      font-size:12px;
+    }
+    .advBody{
+      padding:12px;
+      border-top:1px solid var(--border);
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media(max-width: 700px){
+      .advBody{ grid-template-columns: 1fr; }
+    }
+
+    .sideTitle{
+      font-size:12px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:rgba(231,238,247,.90);
+      margin:0 0 10px 0;
+      font-weight:1000;
+    }
+
+    .list{ display:flex; flex-direction:column; gap:8px; }
+    .list button{
+      width:100%;
+      text-align:left;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(11,15,20,.48);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:900;
+    }
+    .list button:hover{
+      border-color: rgba(122,162,255,.35);
+      background: rgba(122,162,255,.10);
+    }
+
+    .empty{
+      margin-top:14px;
+      color:rgba(159,176,195,.88);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:18px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(12,18,26,.85);
+      color:var(--text);
+      font-size:12px;
+      box-shadow:var(--shadow);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(-2px); }
+
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .mono sup{ font-size:.8em; }
+
+    /* Periodic table */
+    .ptWrap{
+      display:none;
+      margin-top:12px;
+    }
+    .ptGrid{
+      display:grid;
+      grid-template-columns: repeat(18, minmax(38px, 1fr));
+      gap:8px;
+    }
+    @media(max-width: 860px){
+      .ptGrid{ grid-template-columns: repeat(9, minmax(38px, 1fr)); }
+      .ptNote{ display:block; }
+    }
+    .ptCell{
+      border:1px solid var(--border);
+      background:rgba(11,15,20,.48);
+      border-radius:14px;
+      padding:8px;
+      min-height:64px;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      user-select:none;
+    }
+    .ptCell:hover{
+      border-color: rgba(122,162,255,.35);
+      background: rgba(122,162,255,.10);
+    }
+    .ptCell .n{
+      position:absolute;
+      top:7px; left:8px;
+      font-size:11px;
+      color:rgba(159,176,195,.9);
+      font-weight:900;
+    }
+    .ptCell .s{
+      margin-top:12px;
+      font-size:18px;
+      font-weight:1000;
+      letter-spacing:.02em;
+    }
+    .ptCell .nm{
+      font-size:10px;
+      color:rgba(159,176,195,.9);
+      margin-top:4px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ptCell .p{
+      position:absolute;
+      bottom:7px; right:8px;
+      font-size:10px;
+      color:rgba(159,176,195,.75);
+      font-weight:900;
+    }
+
+    /* Ionization chart */
+    .chartBox{
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(11,15,20,.48);
+      padding:10px;
+    }
+    canvas{ display:block; width:100%; height:160px; }
   </style>
 </head>
 <body>
-  <h1>Gwiz Universe</h1>
-  <p>Enjoy! 😋</p>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <h1>Element Card</h1>
+        <p class="sub">card • periodic table • ionization chart</p>
+      </div>
+      <div class="rightHeader">
+        <div class="tabs" aria-label="View tabs">
+          <button class="tab active" id="tabCard">Card</button>
+          <button class="tab" id="tabTable">Periodic Table</button>
+        </div>
+        <div class="pill" title="Dataset status">
+          <span class="dot" id="dsDot"></span>
+          <span id="dsText">Loading…</span>
+        </div>
+      </div>
+    </header>
 
-  <div class="grid">
-    <a class="card" href="https://Gwiz2077.github.io/siren/">
-      <strong>Siren generator</strong><div class="tag">Audio generator</div>
-    </a>
-    <a class="card" href="https://Gwiz2077.github.io/QCII/">
-      <strong>Two Tone Sequential Signaller (QCII)</strong><div class="tag">Audio generator</div>
-    </a>
-    <a class="card" href="https://Gwiz2077.github.io/catgame/">
-      <strong>Cat Game</strong><div class="tag">HTML game</div>
-    </a>
-    <a class="card" href="https://Gwiz2077.github.io/Focus/">
-      <strong>White Noise and Pomodoro Timer app</strong><div class="tag">Audio generator - HTML app</div>
-    </a>
-    <a class="card" href="https://Gwiz2077.github.io/notes/">
-      <strong>Notes app</strong><div class="tag">HTML app</div>
-    </a>
-    <a class="card" href="https://Gwiz2077.github.io/piano/">
-      <strong>Piano app</strong><div class="tag">HTML app</div>
-    </a>
-    <a class="card" href="https://Gwiz2077.github.io/inventory/">
-      <strong>Inventory app</strong><div class="tag">HTML app</div>
-    </a>
-    <a class="card" href="https://Gwiz2077.github.io/Periodic/">
-      <strong>Element Search app</strong><div class="tag">HTML app</div>
-    </a>
+    <section class="card" id="cardView">
+      <div class="searchRow">
+        <div class="search">
+          <span style="color:rgba(159,176,195,.85);font-weight:1000;">⌕</span>
+          <input id="q" type="text" autocomplete="off"
+                 placeholder="Name, Symbol, Atomic #, or Mass (e.g. 12.011)" />
+        </div>
+        <button class="btn primary" id="btnSearch">Search</button>
+        <button class="btn ghost" id="btnRandom">Random</button>
+        <button class="btn bad" id="btnClear">Clear</button>
+      </div>
+
+      <p class="hint">
+        Input logic: <b>decimal</b> → mass • <b>1–3 digits</b> → atomic # • <b>1–3 letters</b> → symbol • otherwise → name.
+        Uses <code>elements.json</code> if present.
+      </p>
+
+      <div class="layout" id="layout" style="display:none;">
+        <!-- MAIN CARD -->
+        <div class="panel2">
+          <div class="badges">
+            <span class="badge"><span class="dot" id="catDot"></span><span id="catText">Category</span></span>
+            <span class="badge">Group: <span class="v" id="groupText" style="font-size:12px;">—</span></span>
+            <span class="badge">Period: <span class="v" id="periodText" style="font-size:12px;">—</span></span>
+            <span class="badge">Block: <span class="v" id="blockText" style="font-size:12px;">—</span></span>
+          </div>
+
+          <div class="hero">
+            <div class="symbolBox"><div class="symbol" id="sym">—</div></div>
+            <div class="meta">
+              <p class="name" id="name">—</p>
+
+              <div class="grid">
+                <div class="kv"><div class="k">Atomic #</div><div class="v" id="anum">—</div></div>
+                <div class="kv"><div class="k">Atomic mass</div><div class="v" id="amass">—</div></div>
+                <div class="kv"><div class="k">Natural state (STP)</div><div class="v" id="stateText">—</div></div>
+                <div class="kv"><div class="k">Melting point (°C)</div><div class="v" id="mpText">—</div></div>
+                <div class="kv"><div class="k">Boiling point (°C)</div><div class="v" id="bpText">—</div></div>
+                <div class="kv"><div class="k">Electronegativity (Pauling)</div><div class="v" id="enText">—</div></div>
+              </div>
+
+              <div class="row">
+                <button class="btn ghost" id="btnCopySymbol">Copy Symbol</button>
+                <button class="btn ghost" id="btnCopyCard">Copy Card</button>
+              </div>
+
+              <details id="detailsAdvanced">
+                <summary>
+                  <span>Advanced</span>
+                  <span class="sub">superscripts • table • ionization chart</span>
+                </summary>
+
+                <div class="advBody">
+                  <div class="kv">
+                    <div class="k">Electron configuration</div>
+                    <div class="v small mono" id="ecText">—</div>
+                  </div>
+
+                  <div class="kv">
+                    <div class="k">Shells</div>
+                    <div class="v small mono" id="shellsText">—</div>
+                  </div>
+
+                  <div class="kv" style="grid-column:1/-1;">
+                    <div class="k">Ionization energies (kJ/mol)</div>
+                    <div class="chartBox">
+                      <canvas id="ieCanvas" width="900" height="220"></canvas>
+                      <div class="v small mono" id="ieList" style="margin-top:8px;">—</div>
+                    </div>
+                  </div>
+
+                  <div class="kv">
+                    <div class="k">Electron affinity (kJ/mol)</div>
+                    <div class="v" id="eaText">—</div>
+                  </div>
+
+                  <div class="kv">
+                    <div class="k">Density (g/cm³)</div>
+                    <div class="v" id="densityText">—</div>
+                  </div>
+
+                  <div class="kv">
+                    <div class="k">Molar heat (J/mol·K)</div>
+                    <div class="v" id="molarHeatText">—</div>
+                  </div>
+
+                  <div class="kv" style="grid-column:1 / -1;">
+                    <div class="k">Summary</div>
+                    <div class="v small" id="summaryText">—</div>
+                  </div>
+
+                  <div class="kv">
+                    <div class="k">Discovered by</div>
+                    <div class="v small" id="discoveredByText">—</div>
+                  </div>
+
+                  <div class="kv">
+                    <div class="k">Source</div>
+                    <div class="v small mono" id="sourceText">—</div>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <!-- MATCHES -->
+        <div class="panel2">
+          <p class="sideTitle">Matches</p>
+          <div id="matchHint" class="empty">If multiple results fit (name partials), pick one.</div>
+          <div class="list" id="matchList"></div>
+        </div>
+      </div>
+
+      <div id="emptyState" class="empty">
+        Type something and hit <b>Search</b>.
+      </div>
+    </section>
+
+    <!-- PERIODIC TABLE VIEW -->
+    <section class="card ptWrap" id="tableView">
+      <div class="searchRow">
+        <div class="search">
+          <span style="color:rgba(159,176,195,.85);font-weight:1000;">⌕</span>
+          <input id="ptFilter" type="text" autocomplete="off"
+                 placeholder="Filter by name/symbol (optional)" />
+        </div>
+        <button class="btn ghost" id="btnPtClear">Clear</button>
+        <button class="btn primary" id="btnPtBackToCard">Open selected in Card</button>
+      </div>
+
+      <p class="hint ptNote">
+        Click an element to select it. (On small screens, layout compresses; still works.)
+      </p>
+
+      <div class="ptGrid" id="ptGrid"></div>
+    </section>
   </div>
 
-  <p style="margin-top:26px;">
-    <a href="https://github.com/Gwiz2077">GitHub profile</a>
-  </p>
+  <div class="toast" id="toast"></div>
+
+<script>
+  const $ = (s)=>document.querySelector(s);
+  const toastEl = $("#toast");
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    setTimeout(()=>toastEl.classList.remove("show"), 1600);
+  }
+
+  function setDatasetStatus(ok, msg){
+    $("#dsDot").style.background = ok ? "var(--good)" : "var(--warn)";
+    $("#dsText").innerHTML = msg;
+  }
+
+  function normalize(s){ return String(s ?? "").trim().toLowerCase(); }
+  function asNum(v){
+    const n = (typeof v === "number") ? v : Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  function fmtNum(n, digits=3){
+    if(n == null || !Number.isFinite(n)) return "—";
+    const s = String(n);
+    if(s.length <= 8) return s;
+    return n.toFixed(digits);
+  }
+  function fmtList(arr, joiner=", "){
+    if(!Array.isArray(arr) || arr.length === 0) return "—";
+    return arr.map(x => (x == null ? "" : String(x))).filter(Boolean).join(joiner) || "—";
+  }
+
+  function categoryColor(catRaw){
+    const cat = normalize(catRaw);
+    if(cat.includes("noble")) return "var(--accent)";
+    if(cat.includes("halogen")) return "var(--warn)";
+    if(cat.includes("alkali metal")) return "var(--bad)";
+    if(cat.includes("alkaline")) return "var(--good)";
+    if(cat.includes("metalloid")) return "rgba(163,255,111,.85)";
+    if(cat.includes("nonmetal")) return "rgba(122,162,255,.85)";
+    if(cat.includes("post-transition")) return "rgba(159,176,195,.95)";
+    if(cat.includes("transition")) return "rgba(255,204,102,.95)";
+    return "rgba(159,176,195,.95)";
+  }
+
+  // Turn "1s2 2s2 2p6" => "1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup>"
+  // Works on common forms; ignores brackets like [He].
+  function toSuperscriptHTML(config){
+    const s = String(config ?? "").trim();
+    if(!s) return "—";
+    // Replace occurrences of orbital+number exponent: "2p6" "3d10" etc.
+    // Also handles configs like "4f14" etc. Keeps brackets as-is.
+    return s
+      .replace(/([0-9]+[spdf])\s*([0-9]+)/gi, (_, orb, exp) => `${orb}<sup>${exp}</sup>`)
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  // Minimal fallback (won’t be used if your 118 json is present)
+  const FALLBACK = [
+    { number: 1, symbol:"H", name:"Hydrogen", atomic_mass: 1.008, group:1, period:1, category:"nonmetal",
+      state_stp:"gas", melting_point_c:-259.16, boiling_point_c:-252.87, block:"s",
+      electron_configuration:"1s1", electron_configuration_semantic:"1s1", shells:[1],
+      electronegativity_pauling:2.20, electron_affinity_kj_mol:72.8, ionization_energies_kj_mol:[1312.0],
+      density_g_cm3:0.00008988, molar_heat_j_mol_k:28.836, summary:"Hydrogen is the lightest element.",
+      discovered_by:"Henry Cavendish", source:""
+    }
+  ];
+
+  let ELEMENTS = [...FALLBACK];
+  let selectedFromTable = null;
+
+  async function loadDataset(){
+    try{
+      const res = await fetch("./elements.json", { cache:"no-store" });
+      if(!res.ok) throw new Error("no elements.json");
+      const data = await res.json();
+      if(!Array.isArray(data) || data.length < 50) throw new Error("dataset too small");
+
+      ELEMENTS = data
+        .filter(e => e && (typeof e.number === "number" || /^\d+$/.test(String(e.number))) && e.symbol && e.name)
+        .map(e => ({
+          number: asNum(e.number),
+          symbol: String(e.symbol),
+          name: String(e.name),
+
+          atomic_mass: asNum(e.atomic_mass ?? e.atomicMass ?? e.mass),
+          group: asNum(e.group),
+          period: asNum(e.period),
+          category: String(e.category ?? e.type ?? "unknown"),
+          block: String(e.block ?? "—"),
+
+          state_stp: String(e.state_stp ?? e.state ?? e.phase ?? "unknown"),
+          melting_point_c: asNum(e.melting_point_c ?? e.melting_c ?? e.meltingPointC),
+          boiling_point_c: asNum(e.boiling_point_c ?? e.boiling_c ?? e.boilingPointC),
+
+          electronegativity_pauling: asNum(e.electronegativity_pauling ?? e.electronegativity),
+          electron_affinity_kj_mol: asNum(e.electron_affinity_kj_mol ?? e.electron_affinity),
+          ionization_energies_kj_mol: Array.isArray(e.ionization_energies_kj_mol ?? e.ionization_energies)
+            ? (e.ionization_energies_kj_mol ?? e.ionization_energies).map(asNum).filter(x=>x!=null)
+            : [],
+
+          electron_configuration: String(e.electron_configuration ?? ""),
+          electron_configuration_semantic: String(e.electron_configuration_semantic ?? ""),
+          shells: Array.isArray(e.shells) ? e.shells : [],
+
+          density_g_cm3: asNum(e.density_g_cm3 ?? e.density),
+          molar_heat_j_mol_k: asNum(e.molar_heat_j_mol_k ?? e.molar_heat),
+
+          summary: String(e.summary ?? "—"),
+          discovered_by: String(e.discovered_by ?? "—"),
+          source: String(e.source ?? "")
+        }))
+        .filter(e => e.number != null);
+
+      setDatasetStatus(true, `Dataset: <b>${ELEMENTS.length}</b> elements`);
+    }catch(_){
+      setDatasetStatus(false, `Dataset: <b>${ELEMENTS.length}</b> (fallback) • add <code>elements.json</code>`);
+    }
+  }
+
+  function parseQuery(raw){
+    const q = raw.trim();
+    if(!q) return { kind:"empty" };
+
+    if(q.includes(".")){
+      const mass = Number(q);
+      if(Number.isFinite(mass)) return { kind:"mass", mass };
+      return { kind:"bad", reason:"Mass must be a number like 12.011" };
+    }
+    if(/^\d{1,3}$/.test(q)){
+      return { kind:"number", number: Number(q) };
+    }
+    if(/^[a-zA-Z]{1,3}$/.test(q)){
+      return { kind:"symbol", symbol: q };
+    }
+    return { kind:"name", name: q };
+  }
+
+  function findByNumber(n){ return ELEMENTS.filter(e => e.number === n); }
+  function findBySymbol(sym){
+    const s = normalize(sym);
+    return ELEMENTS.filter(e => normalize(e.symbol) === s);
+  }
+  function findByName(name){
+    const n = normalize(name);
+    const exact = ELEMENTS.filter(e => normalize(e.name) === n);
+    if(exact.length) return exact;
+    const starts = ELEMENTS.filter(e => normalize(e.name).startsWith(n));
+    if(starts.length) return starts;
+    return ELEMENTS.filter(e => normalize(e.name).includes(n));
+  }
+  function findByMass(mass){
+    const withMass = ELEMENTS.filter(e => e.atomic_mass != null);
+    if(!withMass.length) return [];
+    let best = null;
+    let bestDiff = Infinity;
+    for(const e of withMass){
+      const d = Math.abs(e.atomic_mass - mass);
+      if(d < bestDiff){ bestDiff = d; best = e; }
+    }
+    if(best && bestDiff <= 0.15) return [best];
+    return [];
+  }
+
+  function clearUI(){
+    $("#q").value = "";
+    $("#layout").style.display = "none";
+    $("#emptyState").style.display = "block";
+    $("#emptyState").textContent = "Type something and hit Search.";
+    $("#matchList").innerHTML = "";
+    $("#matchHint").textContent = "If multiple results fit (name partials), pick one.";
+  }
+
+  function showResults(matches){
+    $("#layout").style.display = "grid";
+    $("#emptyState").style.display = "none";
+
+    const list = $("#matchList");
+    list.innerHTML = "";
+
+    if(matches.length > 1){
+      $("#matchHint").textContent = `Found ${matches.length} matches. Click one.`;
+      matches.slice(0, 14).forEach(e=>{
+        const b = document.createElement("button");
+        b.textContent = `${e.number} • ${e.symbol} • ${e.name}`;
+        b.addEventListener("click", ()=>renderElement(e));
+        list.appendChild(b);
+      });
+    }else{
+      $("#matchHint").textContent = "Single match.";
+    }
+
+    renderElement(matches[0]);
+  }
+
+  function setText(sel, val){
+    const el = $(sel);
+    el.textContent = (val === null || val === undefined || val === "" ? "—" : String(val));
+  }
+
+  function renderIonizationChart(canvas, energies){
+    const ctx = canvas.getContext("2d");
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+    // Resize canvas to CSS box
+    const cssW = canvas.clientWidth;
+    const cssH = canvas.clientHeight;
+    canvas.width = Math.floor(cssW * dpr);
+    canvas.height = Math.floor(cssH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // clear
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    if(!Array.isArray(energies) || energies.length === 0){
+      ctx.globalAlpha = 0.85;
+      ctx.font = "12px ui-monospace, Menlo, Consolas, monospace";
+      ctx.fillStyle = "rgba(159,176,195,.95)";
+      ctx.fillText("No ionization energy data available.", 10, 24);
+      return;
+    }
+
+    const padL = 34, padR = 10, padT = 10, padB = 22;
+    const w = cssW - padL - padR;
+    const h = cssH - padT - padB;
+
+    const vals = energies.slice(0, 10); // keep it readable (you can raise this)
+    const maxV = Math.max(...vals);
+    const minV = Math.min(...vals);
+
+    // Grid lines (no custom colors; keep neutral via alpha)
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.lineWidth = 1;
+    for(let i=0;i<=4;i++){
+      const y = padT + (h * i/4);
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(padL + w, y);
+      ctx.stroke();
+    }
+
+    // Axis labels (simple)
+    ctx.fillStyle = "rgba(159,176,195,.95)";
+    ctx.font = "11px ui-monospace, Menlo, Consolas, monospace";
+    ctx.fillText("kJ/mol", 6, 14);
+
+    // Plot
+    const xStep = (vals.length === 1) ? 0 : (w / (vals.length - 1));
+    const yFor = (v) => {
+      // map maxV -> padT, minV -> padT+h
+      const t = (maxV === minV) ? 0.5 : ((maxV - v) / (maxV - minV));
+      return padT + t * h;
+    };
+
+    ctx.strokeStyle = "rgba(122,162,255,.85)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    vals.forEach((v, i) => {
+      const x = padL + i * xStep;
+      const y = yFor(v);
+      if(i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Points + x labels (IE1, IE2...)
+    ctx.fillStyle = "rgba(231,238,247,.95)";
+    vals.forEach((v, i) => {
+      const x = padL + i * xStep;
+      const y = yFor(v);
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      const label = `IE${i+1}`;
+      ctx.fillStyle = "rgba(159,176,195,.90)";
+      ctx.fillText(label, x - 10, padT + h + 16);
+      ctx.fillStyle = "rgba(231,238,247,.95)";
+    });
+  }
+
+  function renderElement(e){
+    setText("#sym", e.symbol ?? "—");
+    setText("#name", e.name ?? "—");
+    setText("#anum", (e.number != null) ? e.number : "—");
+    setText("#amass", fmtNum(e.atomic_mass, 6));
+
+    const cat = e.category ?? "unknown";
+    $("#catText").textContent = cat;
+    $("#catDot").style.background = categoryColor(cat);
+
+    setText("#groupText", (e.group != null) ? e.group : "—");
+    setText("#periodText", (e.period != null) ? e.period : "—");
+    setText("#blockText", e.block ?? "—");
+
+    setText("#stateText", e.state_stp ?? "unknown");
+    setText("#mpText", (e.melting_point_c != null) ? fmtNum(e.melting_point_c, 2) : "—");
+    setText("#bpText", (e.boiling_point_c != null) ? fmtNum(e.boiling_point_c, 2) : "—");
+    setText("#enText", (e.electronegativity_pauling != null) ? fmtNum(e.electronegativity_pauling, 2) : "—");
+
+    // Superscript config: prefer semantic if present, else plain
+    const conf = (e.electron_configuration_semantic || e.electron_configuration || "").trim();
+    $("#ecText").innerHTML = conf ? toSuperscriptHTML(conf) : "—";
+
+    $("#shellsText").textContent = Array.isArray(e.shells) && e.shells.length ? `[${e.shells.join(", ")}]` : "—";
+
+    const ies = Array.isArray(e.ionization_energies_kj_mol) ? e.ionization_energies_kj_mol : [];
+    $("#ieList").textContent = ies.length ? ies.slice(0, 10).map(v => fmtNum(v, 2)).join(", ") + (ies.length > 10 ? " …" : "") : "—";
+    renderIonizationChart($("#ieCanvas"), ies);
+
+    setText("#eaText", (e.electron_affinity_kj_mol != null) ? fmtNum(e.electron_affinity_kj_mol, 2) : "—");
+    setText("#densityText", (e.density_g_cm3 != null) ? fmtNum(e.density_g_cm3, 4) : "—");
+    setText("#molarHeatText", (e.molar_heat_j_mol_k != null) ? fmtNum(e.molar_heat_j_mol_k, 4) : "—");
+
+    setText("#summaryText", e.summary ?? "—");
+    setText("#discoveredByText", e.discovered_by ?? "—");
+    setText("#sourceText", e.source ?? "—");
+
+    $("#btnCopySymbol").onclick = async ()=>{
+      try{ await navigator.clipboard.writeText(e.symbol); toast("Copied symbol"); }
+      catch(_){ toast("Clipboard blocked"); }
+    };
+
+    $("#btnCopyCard").onclick = async ()=>{
+      const card =
+`# ${e.name} (${e.symbol})
+Atomic #: ${e.number}
+Atomic mass: ${fmtNum(e.atomic_mass, 6)}
+Group: ${e.group ?? "—"}  Period: ${e.period ?? "—"}  Block: ${e.block ?? "—"}
+Category: ${cat}
+State (STP): ${e.state_stp ?? "unknown"}
+Melting point (°C): ${e.melting_point_c ?? "—"}
+Boiling point (°C): ${e.boiling_point_c ?? "—"}
+
+Electron config: ${conf || "—"}
+Shells: ${Array.isArray(e.shells) && e.shells.length ? e.shells.join(", ") : "—"}
+Electronegativity (Pauling): ${e.electronegativity_pauling ?? "—"}
+Electron affinity (kJ/mol): ${e.electron_affinity_kj_mol ?? "—"}
+Ionization energies (kJ/mol): ${ies.length ? ies.join(", ") : "—"}`;
+      try{ await navigator.clipboard.writeText(card); toast("Copied card"); }
+      catch(_){ toast("Clipboard blocked"); }
+    };
+  }
+
+  function doSearch(){
+    const raw = $("#q").value;
+    const parsed = parseQuery(raw);
+
+    if(parsed.kind === "empty"){ clearUI(); return; }
+    if(parsed.kind === "bad"){ toast(parsed.reason); return; }
+
+    let matches = [];
+    if(parsed.kind === "mass") matches = findByMass(parsed.mass);
+    if(parsed.kind === "number") matches = findByNumber(parsed.number);
+    if(parsed.kind === "symbol") matches = findBySymbol(parsed.symbol);
+    if(parsed.kind === "name") matches = findByName(parsed.name);
+
+    if(!matches.length){
+      $("#layout").style.display = "none";
+      $("#emptyState").style.display = "block";
+      $("#emptyState").textContent = "No match. Try a different query.";
+      return;
+    }
+    $("#layout").style.display = "grid";
+    $("#emptyState").style.display = "none";
+    showResults(matches);
+  }
+
+  function randomElement(){
+    if(!ELEMENTS.length) return;
+    const e = ELEMENTS[Math.floor(Math.random()*ELEMENTS.length)];
+    $("#q").value = e.symbol;
+    doSearch();
+  }
+
+  // Periodic table rendering
+  function ptCellKey(group, period){
+    return `${group ?? "x"}:${period ?? "x"}`;
+  }
+
+  function buildPeriodicTable(){
+    const grid = $("#ptGrid");
+    grid.innerHTML = "";
+
+    // We’ll place elements into a virtual 18×7 grid using their group & period.
+    // Lanthanides/actinides: many datasets keep group null or 3; we’ll place them in a compressed “group 3, period 6/7” area
+    // and still make them clickable. This is intentionally simple (no extra JSON fields needed).
+    const byPos = new Map();
+    for(const e of ELEMENTS){
+      const g = e.group;
+      const p = e.period;
+      if(g != null && p != null){
+        byPos.set(ptCellKey(g,p), e);
+      }
+    }
+
+    // Build 7 periods × 18 groups
+    for(let p=1; p<=7; p++){
+      for(let g=1; g<=18; g++){
+        const e = byPos.get(ptCellKey(g,p));
+        const cell = document.createElement("div");
+        cell.className = "ptCell";
+        if(e){
+          cell.style.borderColor = "rgba(255,255,255,.10)";
+          cell.style.boxShadow = `inset 0 0 0 1px rgba(0,0,0,.0)`;
+          cell.style.setProperty("--ptc", categoryColor(e.category));
+          // tiny category tint via gradient
+          cell.style.background = `radial-gradient(140px 60px at 20% 10%, ${categoryColor(e.category).replace(")", ", .20)").replace("rgb", "rgba")}, rgba(11,15,20,.48) 60%), rgba(11,15,20,.48)`;
+
+          cell.innerHTML = `
+            <div class="n">${e.number}</div>
+            <div class="s">${e.symbol}</div>
+            <div class="nm">${e.name}</div>
+            <div class="p">P${e.period} G${e.group}</div>
+          `;
+          cell.addEventListener("click", ()=>{
+            selectedFromTable = e;
+            // visual selection: clear others (cheap)
+            [...grid.children].forEach(ch => ch.style.outline = "none");
+            cell.style.outline = "2px solid rgba(122,162,255,.55)";
+            toast(`Selected ${e.name}`);
+          });
+        }else{
+          cell.style.opacity = "0.22";
+          cell.style.cursor = "default";
+          cell.innerHTML = `<div class="p">P${p} G${g}</div>`;
+        }
+        grid.appendChild(cell);
+      }
+    }
+
+    // Filter behavior (optional)
+    const filter = normalize($("#ptFilter").value);
+    if(filter){
+      for(const cell of grid.children){
+        const txt = normalize(cell.textContent);
+        if(!txt.includes(filter)) cell.style.display = "none";
+        else cell.style.display = "";
+      }
+    }
+  }
+
+  function switchTab(which){
+    const cardTab = $("#tabCard");
+    const tableTab = $("#tabTable");
+    const cardView = $("#cardView");
+    const tableView = $("#tableView");
+
+    if(which === "card"){
+      cardTab.classList.add("active");
+      tableTab.classList.remove("active");
+      cardView.style.display = "";
+      tableView.style.display = "none";
+      setTimeout(()=>$("#q").focus(), 60);
+    }else{
+      tableTab.classList.add("active");
+      cardTab.classList.remove("active");
+      cardView.style.display = "none";
+      tableView.style.display = "block";
+      buildPeriodicTable();
+      setTimeout(()=>$("#ptFilter").focus(), 60);
+    }
+  }
+
+  // Wire UI
+  $("#btnSearch").addEventListener("click", doSearch);
+  $("#btnRandom").addEventListener("click", randomElement);
+  $("#btnClear").addEventListener("click", clearUI);
+  $("#q").addEventListener("keydown", (e)=>{ if(e.key === "Enter") doSearch(); });
+
+  $("#tabCard").addEventListener("click", ()=>switchTab("card"));
+  $("#tabTable").addEventListener("click", ()=>switchTab("table"));
+
+  $("#ptFilter").addEventListener("input", ()=>buildPeriodicTable());
+  $("#btnPtClear").addEventListener("click", ()=>{
+    $("#ptFilter").value = "";
+    buildPeriodicTable();
+  });
+  $("#btnPtBackToCard").addEventListener("click", ()=>{
+    if(!selectedFromTable){
+      toast("Select an element first");
+      return;
+    }
+    switchTab("card");
+    $("#q").value = selectedFromTable.symbol;
+    doSearch();
+  });
+
+  // Init
+  (async ()=>{
+    await loadDataset();
+    switchTab("card");
+    setTimeout(()=>$("#q").focus(), 120);
+  })();
+
+  async function loadDataset(){
+    try{
+      const res = await fetch("./elements.json", { cache:"no-store" });
+      if(!res.ok) throw new Error("no elements.json");
+      const data = await res.json();
+      if(!Array.isArray(data) || data.length < 50) throw new Error("dataset too small");
+
+      ELEMENTS = data
+        .filter(e => e && (typeof e.number === "number" || /^\d+$/.test(String(e.number))) && e.symbol && e.name)
+        .map(e => ({
+          number: asNum(e.number),
+          symbol: String(e.symbol),
+          name: String(e.name),
+
+          atomic_mass: asNum(e.atomic_mass ?? e.atomicMass ?? e.mass),
+          group: asNum(e.group),
+          period: asNum(e.period),
+          category: String(e.category ?? e.type ?? "unknown"),
+          block: String(e.block ?? "—"),
+
+          state_stp: String(e.state_stp ?? e.state ?? e.phase ?? "unknown"),
+          melting_point_c: asNum(e.melting_point_c ?? e.melting_c ?? e.meltingPointC),
+          boiling_point_c: asNum(e.boiling_point_c ?? e.boiling_c ?? e.boilingPointC),
+
+          electronegativity_pauling: asNum(e.electronegativity_pauling ?? e.electronegativity),
+          electron_affinity_kj_mol: asNum(e.electron_affinity_kj_mol ?? e.electron_affinity),
+          ionization_energies_kj_mol: Array.isArray(e.ionization_energies_kj_mol ?? e.ionization_energies)
+            ? (e.ionization_energies_kj_mol ?? e.ionization_energies).map(asNum).filter(x=>x!=null)
+            : [],
+
+          electron_configuration: String(e.electron_configuration ?? ""),
+          electron_configuration_semantic: String(e.electron_configuration_semantic ?? ""),
+          shells: Array.isArray(e.shells) ? e.shells : [],
+
+          density_g_cm3: asNum(e.density_g_cm3 ?? e.density),
+          molar_heat_j_mol_k: asNum(e.molar_heat_j_mol_k ?? e.molar_heat),
+
+          summary: String(e.summary ?? "—"),
+          discovered_by: String(e.discovered_by ?? "—"),
+          source: String(e.source ?? "")
+        }))
+        .filter(e => e.number != null);
+
+      setDatasetStatus(true, `Dataset: <b>${ELEMENTS.length}</b> elements`);
+    }catch(_){
+      setDatasetStatus(false, `Dataset: <b>${ELEMENTS.length}</b> (fallback) • add <code>elements.json</code>`);
+    }
+  }
+</script>
 </body>
 </html>
